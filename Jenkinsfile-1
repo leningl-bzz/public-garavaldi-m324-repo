@@ -1,0 +1,40 @@
+pipeline {
+    agent any
+
+    tools {
+        nodejs 'node'   // Name vom Node-Tool in Jenkins
+    }
+
+    stages {
+        stage('Cloning Repo') {
+            steps {
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/main']],
+                    userRemoteConfigs: [[
+                        url: 'https://github.com/leningl-bzz/public-garavaldi-m324-repo.git',
+                        credentialsId: 'github-bzzlab'
+                    ]]
+                ])
+            }
+        }
+
+        stage('Install jest-cli') {
+            steps {
+                sh 'npm install jest-cli -g'
+            }
+        }
+
+        stage('Install dependencies') {
+            steps {
+                sh 'npm install'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh 'npm test'
+            }
+        }
+    }
+}
